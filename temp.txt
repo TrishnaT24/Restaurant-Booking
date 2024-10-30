@@ -1,0 +1,67 @@
+const readline = require('readline');
+
+class TimedQueue {
+  constructor(maxSize) {
+    this.queue = [];
+    this.maxSize = maxSize; 
+  }
+
+  enqueue(user) {
+    if (this.queue.length >= this.maxSize) {
+      console.log("Queue is full. Cannot add more customers.");
+      return;
+    }
+
+    const userEntry = { user, timestamp: new Date() };
+    this.queue.push(userEntry);
+    console.log(`There are ${this.queue.length-1} people ahead of you in this queue`);
+    console.log(`${user} has entered the queue.`);
+
+    
+    setTimeout(() => {
+      this.dequeue();
+    }, 30000); 
+  }
+
+  
+  dequeue() {
+    if (this.queue.length === 0) {
+      console.log("The queue is empty.");
+      return;
+    }
+
+    const frontUser = this.queue.shift();
+    //console.log(`${frontUser.user} has been removed from the queue after 1 minute.`);
+  }
+  front() {
+    if (this.queue.length === 0) {
+      return "The queue is empty.";
+    }
+  }
+  size() {
+    return this.queue.length;
+  }
+}
+
+// Usage example:
+const bookingQueue = new TimedQueue(5); // Create a queue with a maximum size of 5
+
+// Set up readline interface for user input
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+// Function to prompt for a new user to add to the queue
+function addUser() {
+  rl.question("Enter customer name to add to the queue (or type 'exit' to stop): ", (name) => {
+    if (name.toLowerCase() === 'exit') {
+      rl.close();
+      return;
+    }
+    bookingQueue.enqueue(name);
+    addUser(); 
+  });
+}
+
+addUser();
