@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const readline = require('readline');
 const Restaurant = require('./models/Restaurants.js'); // Import the model
 const connectDB = require('./db.js'); 
+// Enable CORS for all routes
+const { app } = require('./app.js');
 
 class TimedQueue {
   constructor(restaurantId) {
@@ -42,7 +44,7 @@ class TimedQueue {
     // Schedule the dequeue operation after 5 seconds
     setTimeout(() => {
       this.dequeue();
-    }, 30000); 
+    }, 3000); 
   }
 
   async updateQueueSize() {
@@ -83,7 +85,7 @@ class TimedQueue {
 async function main() {
   await connectDB();
 
-  const restaurantId = "67222fbd8cfc985b2c7bf763"; // Replace with your actual restaurant ID
+  const restaurantId = "672265bf6b9554c344108bd1"; // Replace with your actual restaurant ID
   const bookingQueue = new TimedQueue(restaurantId); // Create a queue for the restaurant
 
   // Initialize the queue from the database

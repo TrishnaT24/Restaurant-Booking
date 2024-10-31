@@ -65,3 +65,10 @@ function addUser() {
 }
 
 addUser();
+
+
+
+
+
+/// to send post request
+http://localhost:3000/restaurants
