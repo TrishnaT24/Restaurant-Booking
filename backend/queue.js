@@ -1,27 +1,20 @@
 const mongoose = require('mongoose');
 const readline = require('readline');
 const Restaurant = require('./models/Restaurants.js'); // Import the model
-const connectDB = require('./db.js'); 
+const connectDB = require('./db.js');
+
 // Enable CORS for all routes
 const { app } = require('./app.js');
 
 class TimedQueue {
   constructor(restaurantId) {
-    this.queue = [];
-    this.restaurantId = restaurantId; // Store the restaurant ID to fetch queue size
-  }
-
-  // Initialize the queue by fetching the current queue state from the database
-  async initializeQueue() {
-    const restaurant = await Restaurant.findById(this.restaurantId);
-    if (restaurant && restaurant.queue) {
-      this.queue = restaurant.queue; // Load the queue from the database
-    }
+    this.restaurantId = restaurantId;
+    this.dequeueInterval = null;
   }
 
   async getQueueSize() {
     const restaurant = await Restaurant.findById(this.restaurantId);
-    return restaurant ? restaurant.queue_size : 0; // Return the current queue size
+    return restaurant ? restaurant.queue_size : 0;
   }
 
   async enqueue(user) {
@@ -32,72 +25,78 @@ class TimedQueue {
       return;
     }
 
-    const userEntry = { user, timestamp: new Date() };
-    this.queue.push(userEntry);
-    console.log(`There are ${currentSize} people ahead of you in this queue.`);
-    console.log(`Current queue size: ${this.queue.length}.`);
+    // Just log the enqueue event
     console.log(`${user} has entered the queue.`);
+    await this.updateQueueSize(currentSize + 1); // Increment queue size
 
-    // Update queue size in the database
-    await this.updateQueueSize();
-
-    // Schedule the dequeue operation after 5 seconds
-    setTimeout(() => {
-      this.dequeue();
-    }, 3000); 
+    // Start dequeue interval if not already running
+    if (!this.dequeueInterval) {
+      this.startDequeueInterval();
+    }
   }
 
-  async updateQueueSize() {
-    const restaurant = await Restaurant.findById(this.restaurantId);
-    if (restaurant) {
-      restaurant.queue_size = this.queue.length; // Update queue size
-      restaurant.queue = this.queue; // Save current queue state
-      await restaurant.save();
+  async updateQueueSize(newSize) {
+    try {
+      const restaurant = await Restaurant.findById(this.restaurantId);
+      if (restaurant) {
+        restaurant.queue_size = newSize;
+        await restaurant.save();
+        console.log("Queue size updated in the database successfully.");
+      }
+    } catch (err) {
+      console.log("Error updating queue size:", err);
     }
   }
 
   async dequeue() {
-    if (this.queue.length === 0) {
+    const currentSize = await this.getQueueSize();
+    if (currentSize === 0) {
       console.log("The queue is empty.");
       return;
     }
 
-    const frontUser = this.queue.shift();
-    console.log(`${frontUser.user} has been removed from the queue.`);
+    console.log("A user has been removed from the queue.");
+    await this.updateQueueSize(currentSize - 1); // Decrement queue size
+  }
 
-    // Update queue size in the database
-    await this.updateQueueSize();
+  startDequeueInterval() {
+    this.dequeueInterval = setInterval(async () => {
+      await this.dequeue();
+      if (await this.getQueueSize() === 0) {
+        console.log("Queue is empty. Stopping dequeue interval.");
+        clearInterval(this.dequeueInterval);
+        this.dequeueInterval = null;
+      }
+    }, 30000); // Adjust this interval time as necessary
   }
 
   front() {
-    if (this.queue.length === 0) {
-      return "The queue is empty.";
-    }
-    return this.queue[0]; // Return the front user
+    // This method is no longer applicable without an actual queue
+    return "Queue management is based solely on queue size.";
   }
 
   size() {
-    return this.queue.length;
+    return this.getQueueSize();
   }
 }
 
-// Main function to start the queue process
 async function main() {
   await connectDB();
 
-  const restaurantId = "672265bf6b9554c344108bd1"; // Replace with your actual restaurant ID
-  const bookingQueue = new TimedQueue(restaurantId); // Create a queue for the restaurant
+  const restaurantId = "67234ab1a5f5a31213873e7d";
+  const bookingQueue = new TimedQueue(restaurantId);
 
-  // Initialize the queue from the database
-  await bookingQueue.initializeQueue();
+  // No need to initialize an actual queue; just check size
+  const initialSize = await bookingQueue.getQueueSize();
+  if (initialSize > 0) {
+    bookingQueue.startDequeueInterval();
+  }
 
-  // Set up readline interface for user input
   const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout
+    output: process.stdout,
   });
 
-  // Function to prompt for a new user to add to the queue
   function addUser() {
     rl.question("Enter customer name to add to the queue (or type 'exit' to stop): ", async (name) => {
       if (name.toLowerCase() === 'exit') {
@@ -105,7 +104,7 @@ async function main() {
         return;
       }
       await bookingQueue.enqueue(name);
-      addUser(); 
+      addUser();
     });
   }
 

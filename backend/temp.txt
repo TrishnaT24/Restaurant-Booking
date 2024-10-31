@@ -1,74 +1,126 @@
+const mongoose = require('mongoose');
 const readline = require('readline');
-
+const Restaurant = require('./models/Restaurants.js'); // Import the model
+const connectDB = require('./db.js'); 
+// Enable CORS for all routes
+const { app } = require('./app.js');
 class TimedQueue {
-  constructor(maxSize) {
+  constructor(restaurantId) {
     this.queue = [];
-    this.maxSize = maxSize; 
+    this.restaurantId = restaurantId;
+    this.dequeueInterval = null;
   }
 
-  enqueue(user) {
-    if (this.queue.length >= this.maxSize) {
+  async initializeQueue() {
+    const restaurant = await Restaurant.findById(this.restaurantId);
+    if (restaurant && restaurant.queue) {
+      this.queue = restaurant.queue;
+    }
+  }
+
+  async getQueueSize() {
+    const restaurant = await Restaurant.findById(this.restaurantId);
+    return restaurant ? restaurant.queue_size : 0;
+  }
+
+  async enqueue(user) {
+    const currentSize = await this.getQueueSize();
+
+    if (currentSize >= 5) {
       console.log("Queue is full. Cannot add more customers.");
       return;
     }
 
     const userEntry = { user, timestamp: new Date() };
     this.queue.push(userEntry);
-    console.log(`There are ${this.queue.length-1} people ahead of you in this queue`);
+    console.log(`Current queue size: ${this.queue.length}`);
     console.log(`${user} has entered the queue.`);
+    await this.updateQueueSize();
 
-    
-    setTimeout(() => {
-      this.dequeue();
-    }, 30000); 
+    // Start dequeue interval if not already running
+    if (!this.dequeueInterval) {
+      this.startDequeueInterval();
+    }
   }
 
-  
-  dequeue() {
+  async updateQueueSize() {
+    try {
+      const restaurant = await Restaurant.findById(this.restaurantId);
+      if (restaurant) {
+        restaurant.queue_size = this.queue.length;
+        restaurant.queue = this.queue;
+        await restaurant.save();
+        console.log("Queue updated in the database successfully.");
+      }
+    } catch (err) {
+      console.log("Error updating queue:", err);
+    }
+  }
+
+  async dequeue() {
     if (this.queue.length === 0) {
       console.log("The queue is empty.");
       return;
     }
 
     const frontUser = this.queue.shift();
-    //console.log(`${frontUser.user} has been removed from the queue after 1 minute.`);
+    console.log(`${frontUser.user} has been removed from the queue.`);
+    await this.updateQueueSize();
   }
+
+  startDequeueInterval() {
+    this.dequeueInterval = setInterval(async () => {
+      if (this.queue.length > 0) {
+        await this.dequeue();
+      } else {
+        console.log("Queue is empty. Stopping dequeue interval.");
+        clearInterval(this.dequeueInterval);
+        this.dequeueInterval = null;
+      }
+    }, 15000); // Adjust this interval time as necessary
+  }
+
   front() {
     if (this.queue.length === 0) {
       return "The queue is empty.";
     }
+    return this.queue[0];
   }
+
   size() {
     return this.queue.length;
   }
 }
+async function main() {
+  await connectDB();
 
-// Usage example:
-const bookingQueue = new TimedQueue(5); // Create a queue with a maximum size of 5
+  const restaurantId = "67234ab1a5f5a31213873e7d";
+  const bookingQueue = new TimedQueue(restaurantId);
 
-// Set up readline interface for user input
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+  await bookingQueue.initializeQueue();
 
-// Function to prompt for a new user to add to the queue
-function addUser() {
-  rl.question("Enter customer name to add to the queue (or type 'exit' to stop): ", (name) => {
-    if (name.toLowerCase() === 'exit') {
-      rl.close();
-      return;
-    }
-    bookingQueue.enqueue(name);
-    addUser(); 
+  // Start dequeue interval if there are items in the queue
+  if (bookingQueue.size() > 0) {
+    bookingQueue.startDequeueInterval();
+  }
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
   });
+
+  function addUser() {
+    rl.question("Enter customer name to add to the queue (or type 'exit' to stop): ", async (name) => {
+      if (name.toLowerCase() === 'exit') {
+        rl.close();
+        return;
+      }
+      await bookingQueue.enqueue(name);
+      addUser();
+    });
+  }
+
+  addUser();
 }
 
-addUser();
-
-
-
-
-
-/// to send post request
-http://localhost:3000/restaurants
+main();

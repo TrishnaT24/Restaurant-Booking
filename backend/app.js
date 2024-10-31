@@ -94,17 +94,21 @@ app.post('/api/restaurants/:name/dequeue', async (req, res) => {
             return res.status(404).json({ message: 'Restaurant not found' });
         }
 
-        if (restaurant.queue.length === 0) {
+        // Check if the queue size is greater than 0
+        if (restaurant.queue_size <= 0) {
             return res.status(400).json({ message: 'No one in the queue to dequeue.' });
         }
 
-        const dequeuedUser = restaurant.queue.shift(); // Remove the first user from the queue
-        restaurant.queue_size -= 1; // Decrement queue size
+        // Decrement queue size
+        restaurant.queue_size -= 1;
+
+        // Save the updated restaurant document
         await restaurant.save();
 
-        res.json({ user: dequeuedUser, queueSize: restaurant.queue_size });
+        res.json({ queueSize: restaurant.queue_size });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error' });
+        console.error('Error dequeueing:', error);
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 });
 

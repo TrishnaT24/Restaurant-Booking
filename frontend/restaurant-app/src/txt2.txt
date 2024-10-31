@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './RestaurantPage.css';
-import restaurantImage from './resto.jpg';
+import restaurantImage from './resto.jpg'; // Import the image file
 
 const RestaurantPage = () => {
   const [restaurantData, setRestaurantData] = useState(null);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState(''); // State to hold messages
 
-  // Function to fetch restaurant data
   const fetchRestaurantData = async () => {
+    console.log('Fetching restaurant data...');
     try {
-      const response = await fetch('http://localhost:3000/api/restaurants/yorikobi');
+      const response = await fetch('http://localhost:3000/api/restaurants/yorikobi'); // Ensure this matches your backend
       if (response.ok) {
         const data = await response.json();
         setRestaurantData(data);
@@ -22,10 +22,9 @@ const RestaurantPage = () => {
     }
   };
 
-  // Function to join the queue
   const joinQueue = async () => {
     try {
-      const userName = 'Customer';
+      const userName = 'Customer'; // Replace with actual user identification if available
       const response = await fetch('http://localhost:3000/api/restaurants/yorikobi/joinQueue', {
         method: 'POST',
         headers: {
@@ -37,10 +36,9 @@ const RestaurantPage = () => {
       if (response.ok) {
         const result = await response.json();
         setMessage(`You have been added to the queue. There are ${result.queueSize} people ahead of you.`);
-        fetchRestaurantData(); // Refresh data after joining queue
       } else if (response.status === 400) {
         const error = await response.json();
-        setMessage(error.message || 'Error joining the queue.');
+        setMessage(error.message || 'Error joining the queue.'); // Assuming your backend sends an error message
       } else {
         setMessage('An unexpected error occurred.');
       }
@@ -50,38 +48,13 @@ const RestaurantPage = () => {
     }
   };
 
-  // Function to dequeue user every 15 seconds
-  const startAutoDequeue = () => {
-    setInterval(async () => {
-      try {
-        const response = await fetch('http://localhost:3000/api/restaurants/yorikobi/dequeue', {
-          method: 'POST',
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          setMessage(`User ${result.user} has been dequeued. Remaining queue size: ${result.queueSize}`);
-          fetchRestaurantData(); // Refresh data after dequeueing
-        } else {
-          console.error('Dequeue operation failed.');
-        }
-      } catch (error) {
-        console.error('Error dequeueing:', error);
-      }
-    }, 15000); // Dequeue every 15 seconds
-  };
-
-  // Start automatic dequeue when component mounts
-  useEffect(() => {
-    fetchRestaurantData(); // Initial data fetch
-    startAutoDequeue(); // Start the dequeue process
-
-    return () => clearInterval(startAutoDequeue); // Cleanup on unmount
-  }, []);
-
   return (
     <div className="container">
-      <img src={restaurantImage} alt="Restaurant" className="restaurant-image" />
+      <img
+        src={restaurantImage} // Use the imported image
+        alt="Restaurant"
+        className="restaurant-image"
+      />
       <h1 className="title">Yorokobi Sushi</h1>
       {restaurantData ? (
         <ul className="details-list">
@@ -106,9 +79,10 @@ const RestaurantPage = () => {
           Join Queue
         </button>
       </div>
-      {message && <p className="message">{message}</p>}
+      {message && <p className="message">{message}</p>} {/* Display message to the user */}
     </div>
   );
 };
 
 export default RestaurantPage;
+
