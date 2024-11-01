@@ -10,9 +10,9 @@ function RefrshHandler({ setIsAuthenticated }) {
             setIsAuthenticated(true);
             if (location.pathname === '/' ||
                 location.pathname === '/login' ||
-                location.pathname === '/signup'
+                location.pathname === '/signup' || location.pathname==='/filters'
             ) {
-                navigate('/home', { replace: false });
+                navigate(`/${location.pathname}`, { replace: false });
             }
         }
     }, [location, navigate, setIsAuthenticated])

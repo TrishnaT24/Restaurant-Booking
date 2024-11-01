@@ -5,8 +5,7 @@ import Signup from './pages/Signup';
 import Home from './pages/Home';
 import { useState } from 'react';
 import RefrshHandler from './RefrshHandler';
-import RestaurantList from './filters';
-import RestaurantPage from './RestaurantPage';
+import ResturantList from './filters'
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -18,12 +17,10 @@ function App() {
     <div className="App">
       <RefrshHandler setIsAuthenticated={setIsAuthenticated} />
       <Routes>
-        <Route path='/' element={<RestaurantPage/>}/> 
-       {/* <Route path='/filter' element={<RestaurantList/>}/>
-        <Route path='/' element={<Navigate to="/l" />} />
+        <Route path='/' element={<Navigate to="/login" />} />
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
-        <Route path='/home' element={<PrivateRoute element={<Home />} />} /> */}
+        <Route path='/filters' element={<PrivateRoute element={<ResturantList />} />} />
       </Routes>
     </div>
   );

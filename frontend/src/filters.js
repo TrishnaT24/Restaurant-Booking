@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './filter.css';
-import pic from './pic.jpg';
+import pic from './pic.png';
 
 function RestaurantList() {
   const [restaurants] = useState([

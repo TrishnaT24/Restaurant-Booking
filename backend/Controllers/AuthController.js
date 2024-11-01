@@ -12,8 +12,8 @@ const signup = async (req, res) => {
                 .json({ message: 'User is already exist, you can login', success: false });
         }
         const userModel = new UserModel({ name, email, password });
-        userModel.password = await bcrypt.hash(password, 10);//password ko encrypt kiy 
-        await userModel.save();//fir save kiya
+        userModel.password = await bcrypt.hash(password, 10);
+        await userModel.save();
         res.status(201)
             .json({
                 message: "Signup successfully",
@@ -38,8 +38,8 @@ const login = async (req, res) => {
             return res.status(403)
                 .json({ message: errorMsg, success: false });
         }
-        const isPassEqual = await bcrypt.compare(password, user.password);//first password is abhi dala hua
-        if (!isPassEqual) {//dusra password is db ka
+        const isPassEqual = await bcrypt.compare(password, user.password);
+        if (!isPassEqual) {
             return res.status(403)
                 .json({ message: errorMsg, success: false });
         }
@@ -70,10 +70,3 @@ module.exports = {
     signup,
     login
 }
-
-//After successful login, the server generates a JWT token containing the user’s email and _id.
-//The server sends this token back to the client, along with a 
-//success message and basic user information.
-//The client can store jwtToken and include it in headers of subsequent requests
-// to access protected routes. The server can verify this token on each 
-//request to ensure the user is authenticated.

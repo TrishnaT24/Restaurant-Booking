@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-//scheme of db
+
 const UserSchema = new Schema({
     name: {
         type: String,
@@ -18,4 +18,4 @@ const UserSchema = new Schema({
 });
 
 const UserModel = mongoose.model('users', UserSchema);
-module.exports = UserModel;//maine user schema ko users collection se attach kiya
+module.exports = UserModel;
