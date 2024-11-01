@@ -1,0 +1,82 @@
+const mongoose = require('mongoose');
+const readline = require('readline');
+const Restaurant = require('./models/Restaurants.js'); // Import the model
+const connectDB = require('./db.js');
+const {app,server}=require('./app.js');
+class TimedQueue {
+  constructor(restaurantId) {
+    this.restaurantId = restaurantId;
+    this.dequeueInterval = null;
+  }
+
+  async getQueueSize() {
+    const restaurant = await Restaurant.findById(this.restaurantId);
+    return restaurant ? restaurant.queue_size : 0;
+  }
+
+  async enqueue(user) {
+    const currentSize = await this.getQueueSize();
+
+    if (currentSize >= 5) {
+      console.log("Queue is full. Cannot add more customers.");
+      return;
+    }
+
+    console.log(`${user} has entered the queue.`);
+    await this.updateQueueSize(currentSize + 1);
+
+    if (!this.dequeueInterval) {
+      this.startDequeueInterval();
+    }
+  }
+
+  async updateQueueSize(newSize) {
+    try {
+      const restaurant = await Restaurant.findById(this.restaurantId);
+      if (restaurant) {
+        restaurant.queue_size = newSize;
+        await restaurant.save();
+        console.log("Queue size updated in the database successfully.");
+      }
+    } catch (err) {
+      console.log("Error updating queue size:", err);
+    }
+  }
+
+  async dequeue() {
+    const currentSize = await this.getQueueSize();
+    if (currentSize === 0) {
+      console.log("The queue is empty.");
+      return;
+    }
+
+    console.log("A user has been removed from the queue.");
+    await this.updateQueueSize(currentSize - 1);
+  }
+
+  startDequeueInterval() {
+    this.dequeueInterval = setInterval(async () => {
+      await this.dequeue();
+      if (await this.getQueueSize() === 0) {
+        console.log("Queue is empty. Stopping dequeue interval.");
+        clearInterval(this.dequeueInterval);
+        this.dequeueInterval = null;
+      }
+    }, 30000);
+  }
+}
+
+async function initQueue() {
+  await connectDB();
+  const restaurantId = "67247ffba555f181c1376977";
+  const bookingQueue = new TimedQueue(restaurantId);
+
+  const initialSize = await bookingQueue.getQueueSize();
+  if (initialSize > 0) {
+    bookingQueue.startDequeueInterval();
+  }
+
+  return bookingQueue;
+}
+
+module.exports = { initQueue };

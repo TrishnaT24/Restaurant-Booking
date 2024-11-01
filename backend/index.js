@@ -1,24 +1,35 @@
-const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const AuthRouter = require('./Routes/AuthRouter');
-const ProductRouter = require('./Routes/ProductRouter');
-
 require('dotenv').config();
+const express = require('express');
+const authRouter = require('./Routes/AuthRouter.js');
+const ProductRouter=require('./Routes/ProductRouter.js');
+const bodyParser = require('body-parser');
 require('./Models/db');
-const PORT = process.env.PORT || 8080;
+const app = require('../trishna_details/backend/app.js'); // Import the app instance
+const { initQueue } = require('../trishna_details/backend/queue.js'); // Import queue initialization function
+const PORT = process.env.PORT || 3000;
 
-app.get('/ping', (req, res) => {
-    res.send('PONG');
-});
 
+
+const cors = require('cors');
+app.use(express.json()); // To parse JSON bodies
+app.use('/auth', authRouter); 
+app.use('/products', ProductRouter);
 app.use(bodyParser.json());
 app.use(cors());
-app.use('/auth', AuthRouter);
-app.use('/products', ProductRouter);
+app.get('/ping', (req, res) => {
+  res.send('PONG');
+});
 
+app.listen(PORT, async () => {
+  console.log(`Server is running on ${PORT}`);
+  
+  // Initialize the queue after server starts
+  const bookingQueue = await initQueue();
 
-app.listen(PORT, () => {
-    console.log(`Server is running on ${PORT}`)
-})
+  // Route to enqueue a user in the booking queue
+  app.post('/queue/enqueue', async (req, res) => {
+    const { user } = req.body;
+    await bookingQueue.enqueue(user);
+    res.send(`${user} added to the queue.`);
+  });
+});

@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './filter.css';
 import pic from './pic.png';
 
 function RestaurantList() {
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
   const [restaurants] = useState([
-    { id: 1, name: "The Gourmet Kitchen", location: "Downtown", veg: true, rating: 4.5, cuisine: "Italian", image:pic },
-    { id: 2, name: "Sushi Palace", location: "City Center", veg: false, rating: 4.8, cuisine: "Japanese", image:pic },
-    { id: 3, name: "Burger Hub", location: "Suburbs", veg: false, rating: 4.2, cuisine: "American", image:pic },
-    { id: 4, name: "Green Delight", location: "Suburbs", veg: true, rating: 4.7, cuisine: "Indian", image:pic }
+    { id: 1, name: "yorikobi", location: "Downtown", veg: true, rating: 4.5, cuisine: "Italian", image: pic },
+    { id: 2, name: "Sushi Palace", location: "City Center", veg: false, rating: 4.8, cuisine: "Japanese", image: pic },
+    { id: 3, name: "Burger Hub", location: "Suburbs", veg: false, rating: 4.2, cuisine: "American", image: pic },
+    { id: 4, name: "Green Delight", location: "Suburbs", veg: true, rating: 4.7, cuisine: "Indian", image: pic }
   ]);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -87,7 +90,15 @@ function RestaurantList() {
               </div>
               <div className="cuisine text-gray-600">Cuisine: {restaurant.cuisine}</div>
             </div>
-            <div className="footer bg-gray-100 p-2 text-center text-sm text-gray-500 rounded-b-lg">Enjoy your meal!</div>
+            <div className="footer bg-gray-100 p-2 text-center text-sm text-gray-500 rounded-b-lg">
+              Enjoy your meal!
+              <button
+                onClick={() => navigate(`/restaurant/yorikobi`)} // Navigate to the restaurant page
+                className="ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                View Details
+              </button>
+            </div>
           </div>
         ))}
       </div>
