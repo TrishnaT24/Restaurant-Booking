@@ -69,7 +69,7 @@ class TimedQueue {
         clearInterval(this.dequeueInterval);
         this.dequeueInterval = null;
       }
-    }, 3000); // 30 seconds interval for dequeueing
+    }, 30000); // 30 seconds interval for dequeueing
   }
 }
 

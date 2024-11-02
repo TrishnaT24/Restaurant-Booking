@@ -4,43 +4,71 @@ import Signup from './pages/Signup';
 import Home from './pages/Home';
 import { useState, useEffect } from 'react';
 import RefrshHandler from './RefrshHandler';
-import ResturantList from './filters';
+import RestaurantList from './filters';
 import Login from './pages/Login';
-import RestaurantPage from './RestaurantPage.js'; // Import RestaurantPage component
+import RestaurantPage from './RestaurantPage';
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
             setIsAuthenticated(true);
-            navigate('/filters'); // Redirect to filters if already authenticated
         }
-    }, [navigate]);
+        setIsLoading(false);
+    }, []);
 
     const handleLogout = () => {
-        localStorage.removeItem('token'); // Remove token from local storage
-        setIsAuthenticated(false); // Update authentication state
-        navigate('/login'); // Redirect to login
+        localStorage.removeItem('token');
+        setIsAuthenticated(false);
+        navigate('/login');
     };
 
-    const PrivateRoute = ({ element }) => {
-        return isAuthenticated ? element : <Navigate to="/login" />;
+    const PrivateRoute = ({ children }) => {
+        if (isLoading) {
+            return <div>Loading...</div>;
+        }
+        return isAuthenticated ? children : <Navigate to="/login" />;
     };
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="App">
             <RefrshHandler setIsAuthenticated={setIsAuthenticated} />
-            <button onClick={handleLogout}>Logout</button>
+            {isAuthenticated && (
+                <button 
+                    onClick={handleLogout}
+                    className="absolute top-4 right-4 px-4 py-2 bg-red-500 text-white rounded"
+                >
+                    Logout
+                </button>
+            )}
             <Routes>
-                <Route path='/' element={<Navigate to="/login" />} />
-                <Route path='/login' element={<Login setIsAuthenticated={setIsAuthenticated} />} />
-                <Route path='/signup' element={<Signup />} />
-                <Route path='/filters' element={<PrivateRoute element={<ResturantList />} />} />
-                <Route path='/restaurant/:name' element={<RestaurantPage />} /> 
-                {/* Add route for RestaurantPage */}
+                <Route path="/" element={<Navigate to="/login" />} />
+                <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route 
+                    path="/filters" 
+                    element={
+                        <PrivateRoute>
+                            <RestaurantList />
+                        </PrivateRoute>
+                    } 
+                />
+                <Route 
+                    path="/restaurant/:name" 
+                    element={
+                        <PrivateRoute>
+                            <RestaurantPage />
+                        </PrivateRoute>
+                    } 
+                />
             </Routes>
         </div>
     );

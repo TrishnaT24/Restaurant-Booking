@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './filter.css';
 import pic from './pic.png';
+import { Link } from 'react-router-dom';
+
 
 function RestaurantList() {
   const navigate = useNavigate(); // Initialize useNavigate hook
@@ -93,7 +95,7 @@ function RestaurantList() {
             <div className="footer bg-gray-100 p-2 text-center text-sm text-gray-500 rounded-b-lg">
               Enjoy your meal!
               <button
-                onClick={() => navigate(`/restaurant/yorikobi`)} // Navigate to the restaurant page
+                onClick={() => navigate(`/restaurant/${restaurant.name}`)} // Navigate to the restaurant page
                 className="ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
                 View Details
@@ -107,3 +109,16 @@ function RestaurantList() {
 }
 
 export default RestaurantList;
+
+
+
+
+
+
+
+
+
+
+
+
+

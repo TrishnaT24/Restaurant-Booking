@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import './RestaurantPage.css';
 import restaurantImage from './resto.jpg';
 
 const RestaurantPage = () => {
   const [restaurantData, setRestaurantData] = useState(null);
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const { name } = useParams();
+  const navigate = useNavigate();
 
   // Function to fetch restaurant data
   const fetchRestaurantData = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/restaurants/yorikobi');
+      setIsLoading(true);
+      const response = await fetch(`http://localhost:3000/api/restaurants/${name}`);
       if (response.ok) {
         const data = await response.json();
         setRestaurantData(data);
@@ -19,6 +24,8 @@ const RestaurantPage = () => {
       }
     } catch (error) {
       console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -26,7 +33,7 @@ const RestaurantPage = () => {
   const joinQueue = async () => {
     try {
       const userName = 'Customer';
-      const response = await fetch('http://localhost:3000/api/restaurants/yorikobi/joinQueue', {
+      const response = await fetch(`http://localhost:3000/api/restaurants/${name}/joinQueue`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,7 +44,7 @@ const RestaurantPage = () => {
       if (response.ok) {
         const result = await response.json();
         setMessage(`You have been added to the queue. There are ${result.queueSize} people ahead of you.`);
-        fetchRestaurantData(); // Refresh data after joining queue
+        fetchRestaurantData();
       } else if (response.status === 400) {
         const error = await response.json();
         setMessage(error.message || 'Error joining the queue.');
@@ -50,39 +57,53 @@ const RestaurantPage = () => {
     }
   };
 
-  // Function to dequeue user every 15 seconds
-  const startAutoDequeue = () => {
-    setInterval(async () => {
+  useEffect(() => {
+    let intervalId;
+
+    const startAutoDequeue = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/restaurants/yorikobi/dequeue', {
+        const response = await fetch(`http://localhost:3000/api/restaurants/${name}/dequeue`, {
           method: 'POST',
         });
 
         if (response.ok) {
           const result = await response.json();
           setMessage(`User ${result.user} has been dequeued. Remaining queue size: ${result.queueSize}`);
-          fetchRestaurantData(); // Refresh data after dequeueing
-        } else {
-          console.error('Dequeue operation failed.');
+          fetchRestaurantData();
         }
       } catch (error) {
         console.error('Error dequeueing:', error);
       }
-    }, 15000); // Dequeue every 15 seconds
-  };
+    };
 
-  // Start automatic dequeue when component mounts
-  useEffect(() => {
-    fetchRestaurantData(); // Initial data fetch
-    startAutoDequeue(); // Start the dequeue process
+    fetchRestaurantData();
+    intervalId = setInterval(startAutoDequeue, 30000);
 
-    return () => clearInterval(startAutoDequeue); // Cleanup on unmount
-  }, []);
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [name]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-xl">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
+      <button
+        onClick={() => navigate('/filters')}
+        className="absolute top-4 left-4 px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Back to Restaurants
+      </button>
       <img src={restaurantImage} alt="Restaurant" className="restaurant-image" />
-      <h1 className="title">yorikobi</h1>
+      <h1 className="title">{name}</h1>
       {restaurantData ? (
         <ul className="details-list">
           <li>Rating: {restaurantData.rating} ⭐️</li>
