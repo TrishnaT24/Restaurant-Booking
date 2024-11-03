@@ -1,0 +1,28 @@
+header {
+    width: 100%;
+    background:#231b1b;
+    height: 80px;
+    display: flex;
+    padding: 1rem 1.5rem 1rem 1.5rem;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+header h1 {
+    flex: 1 1 auto;
+    text-align: left;
+}
+
+@media screen and (min-width: 1280px) {
+    header {
+        padding-left: 6%;
+        padding-right: 6%;
+    }
+}
+
+@media screen and (min-width: 1536px) {
+    header {
+        padding-left: 15%;
+        padding-right: 15%;
+    }
+}

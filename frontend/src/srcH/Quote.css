@@ -1,0 +1,41 @@
+.quote {
+    width: 100%;
+    padding: 2rem 1rem 3.5rem 1rem;
+    background-color: var(--primary);
+    color: var(--light-text);
+}
+
+.quote blockquote {
+    font-size: 2rem;
+    font-family: var(--display-font);
+}
+
+.quote cite {
+    display: block;
+    width: 100%;
+    text-align: right;
+    padding-right: 1rem;
+    font-size: 1.5rem;
+    font-style: normal;
+}
+
+@media screen and (min-width: 1024px) {
+    .quote {
+        padding-left: 5%;
+        padding-right: 6%;
+    }
+}
+
+@media screen and (min-width: 1280px) {
+    .quote {
+        padding-left: 10%;
+        padding-right: 12%;
+    }
+}
+
+@media screen and (min-width: 1536px) {
+    .quote {
+        padding-left: 15%;
+        padding-right: 18%;
+    }
+}

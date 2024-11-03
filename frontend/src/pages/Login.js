@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { handleError, handleSuccess } from '../utils';
+import './Login.css'; // Import the specific CSS file
 
-function Login({ setIsAuthenticated }) { // Receive setIsAuthenticated as a prop
+function Login({ setIsAuthenticated }) {
     const [loginInfo, setLoginInfo] = useState({
         email: '',
         password: ''
@@ -13,9 +14,7 @@ function Login({ setIsAuthenticated }) { // Receive setIsAuthenticated as a prop
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        const copyLoginInfo = { ...loginInfo };
-        copyLoginInfo[name] = value;
-        setLoginInfo(copyLoginInfo);
+        setLoginInfo(prev => ({ ...prev, [name]: value }));
     };
 
     const handleLogin = async (e) => {
@@ -39,14 +38,14 @@ function Login({ setIsAuthenticated }) { // Receive setIsAuthenticated as a prop
                 handleSuccess(message);
                 localStorage.setItem('token', jwtToken);
                 localStorage.setItem('loggedInUser', name);
-                setIsAuthenticated(true); // Update authentication state
+                setIsAuthenticated(true);
                 setTimeout(() => {
-                    navigate('/filters'); // Navigate to filters after a successful login
+                    navigate('/filters');
                 }, 1000);
             } else if (error) {
                 const details = error?.details[0].message;
                 handleError(details);
-            } else if (!success) {
+            } else {
                 handleError(message);
             }
         } catch (err) {
@@ -55,33 +54,35 @@ function Login({ setIsAuthenticated }) { // Receive setIsAuthenticated as a prop
     };
 
     return (
-        <div className='container'>
-            <h1>Login</h1>
-            <form onSubmit={handleLogin}>
-                <div>
-                    <label htmlFor='email'>Email</label>
-                    <input
-                        onChange={handleChange}
-                        type='email'
-                        name='email'
-                        placeholder='Enter your email...'
-                        value={loginInfo.email}
-                    />
-                </div>
-                <div>
-                    <label htmlFor='password'>Password</label>
-                    <input
-                        onChange={handleChange}
-                        type='password'
-                        name='password'
-                        placeholder='Enter your password...'
-                        value={loginInfo.password}
-                    />
-                </div>
-                <button type='submit'>Login</button>
-                <span>Doesn't have an account? <Link to="/signup">Signup</Link></span>
-            </form>
-            <ToastContainer />
+        <div className='login-container'>
+            <div className='login-box'>
+                <h1>Login</h1>
+                <form onSubmit={handleLogin}>
+                    <div>
+                        <label htmlFor='email'>Email</label>
+                        <input
+                            onChange={handleChange}
+                            type='email'
+                            name='email'
+                            placeholder='Enter your email...'
+                            value={loginInfo.email}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor='password'>Password</label>
+                        <input
+                            onChange={handleChange}
+                            type='password'
+                            name='password'
+                            placeholder='Enter your password...'
+                            value={loginInfo.password}
+                        />
+                    </div>
+                    <button type='submit'>Login</button>
+                    <span>Doesn't have an account? <Link to="/signup">Signup</Link></span>
+                </form>
+                <ToastContainer />
+            </div>
         </div>
     );
 }

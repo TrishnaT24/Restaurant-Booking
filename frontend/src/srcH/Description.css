@@ -1,0 +1,26 @@
+.description {
+    width: 85%;
+    margin: auto;
+}
+
+.description h2 {
+    padding-top: 2rem;
+}
+
+@media screen and (min-width: 640px) {
+    .description {
+        width: 75%;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .description {
+        width: 80%;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .description {
+        width: 65%;
+    }
+}

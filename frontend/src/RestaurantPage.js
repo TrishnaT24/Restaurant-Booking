@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './RestaurantPage.css';
-import restaurantImage from './resto.jpg';
+import thai from './images/thai.jpg';
 
 const RestaurantPage = () => {
   const [restaurantData, setRestaurantData] = useState(null);
@@ -98,11 +98,14 @@ const RestaurantPage = () => {
     <div className="container">
       <button
         onClick={() => navigate('/filters')}
-        className="absolute top-4 left-4 px-4 py-2 bg-blue-500 text-white rounded"
+        style={{color:'purple',
+          fontWeight:'bold',
+          marginBottom:'25px'
+        }}className="absolute top-4 left-4 px-4 py-2 bg-blue-500 text-white rounded"
       >
         Back to Restaurants
       </button>
-      <img src={restaurantImage} alt="Restaurant" className="restaurant-image" />
+      <img src={thai} alt="Restaurant" className="restaurant-image" />
       <h1 className="title">{name}</h1>
       {restaurantData ? (
         <ul className="details-list">
