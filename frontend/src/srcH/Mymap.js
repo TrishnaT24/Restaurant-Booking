@@ -68,7 +68,7 @@ const restaurants = [
 const position = [51.505, -0.09];
 export default function Mymap() {
   return (
-    <MapContainer center={[19.1136, 72.8697]} zoom={13} style={{width: '900px',height:'500px'}}>
+    <MapContainer center={[19.1136, 72.8697]} zoom={10} style={{width: '900px',height:'500px'}}>
       {/* OpenStreetMap tiles */}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -88,7 +88,7 @@ export default function Mymap() {
           >
             <Popup>
               <div>
-                <p>{restaurant.popUp}</p>
+                <p style={{color:'black'}}>{restaurant.popUp}</p>
                 <a
                   href={restaurant.link}
                   target="_blank"
