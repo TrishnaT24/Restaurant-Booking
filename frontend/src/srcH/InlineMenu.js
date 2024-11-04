@@ -9,8 +9,8 @@ function InlineMenu({setShowAppH,setShowMymap}) {
         navigate('/signup');
     };
     const handleMapClick = () => {
-        setShowAppH(false);
-        setShowMymap(true);
+        setShowAppH(true);
+        setShowMymap(false);
         navigate('/map');
     };
 

@@ -1,5 +1,4 @@
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-//import './App.css';
+import { Navigate, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import Signup from './pages/Signup';
 import Home from './pages/Home';
 import { useState, useEffect } from 'react';
@@ -13,10 +12,20 @@ import Mymap from './srcH/Mymap';
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [showAppH, setShowAppH] = useState(true); // State to control AppH display
-    const [showMymap, setShowMymap] = useState(true); // State to control AppH display
+    const [showAppH, setShowAppH] = useState(false); // State to control AppH display
+    const [showMymap, setShowMymap] = useState(false); // State to control AppH display
 
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        // Show AppH when the URL path is '/'
+        if (location.pathname === '/') {
+            setShowAppH(true);
+        } else {
+            setShowAppH(false);
+        }
+    }, [location.pathname]);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -39,12 +48,12 @@ function App() {
         return isAuthenticated ? children : <Navigate to="/login" />;
     };
 
-    //Conditionally render AppH at the start
+    // Conditionally render AppH at the start
     if (showAppH) {
-        return <AppH setShowAppH={setShowAppH} setShowMymap={setShowMymap}/>; // Pass onProceed to close AppH
+        return <AppH setShowAppH={setShowAppH} setShowMymap={setShowMymap}/>; 
     }
     if (showMymap) {
-        return <Mymap setShowMymap={setShowMymap}/>; // Pass onProceed to close AppH
+        return <Mymap/>; 
     }
 
     if (isLoading) {
@@ -66,7 +75,6 @@ function App() {
                         color: 'black',
                         borderRadius: '0.25rem'
                     }}
-                    // className="absolute top-4 right-4 px-4 py-2 bg-red-500 text-white rounded"
                 >
                     Logout
                 </button>
