@@ -1,7 +1,6 @@
-/* filter.css */
-
 body {
   font-family: Arial, sans-serif;
+  background-color: #f0f0f0; /* Light background for overall contrast */
 }
 
 h1 {
@@ -12,7 +11,7 @@ h1 {
 
 p {
   font-size: 1.1em;
-  color:whitesmoke;
+  color: whitesmoke;
   margin-bottom: 1em;
 }
 
@@ -25,7 +24,7 @@ p {
   margin-bottom: 2em;
 }
 
-input[type="text"] {
+input[type="text"], select {
   padding: 0.8em 1em;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -34,19 +33,7 @@ input[type="text"] {
   transition: border-color 0.3s;
 }
 
-input[type="text"]:focus {
-  border-color: #4a90e2;
-}
-
-select {
-  padding: 0.8em 1em;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  outline: none;
-  transition: border-color 0.3s;
-}
-
-select:focus {
+input[type="text"]:focus, select:focus {
   border-color: #4a90e2;
 }
 
@@ -76,6 +63,7 @@ select:focus {
   height: 150px; /* Set a fixed height */
   object-fit: cover; /* Maintain aspect ratio and cover the area */
 }
+
 .card-content {
   padding: 1em;
 }
@@ -121,6 +109,13 @@ h3 {
   text-align: center;
   padding: 0.8em;
   background-color: #f9f9f9;
-  color: #555;
+  color: #333; /* Improved contrast for better readability */
   font-size: 0.9em;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .card {
+    width: 100%; /* Full width for smaller screens */
+  }
 }

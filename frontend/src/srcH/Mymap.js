@@ -7,13 +7,13 @@ import { Icon, divIcon, point } from "leaflet";
 // create custom icon for regular markers
 const customIcon = new Icon({
   iconUrl: require("../images/iconn.png"),
-  iconSize: [38, 38] // size of the icon
+  iconSize: [38, 38], // size of the icon
 });
 
 // create custom icon for restaurant markers
 const restaurantIcon = new Icon({
   iconUrl: require("../images/iconn.png"), // path to the restaurant icon
-  iconSize: [38, 38] // size of the icon
+  iconSize: [38, 38], // size of the icon
 });
 
 // create custom icon for hospital markers
@@ -33,7 +33,7 @@ const createClusterCustomIcon = function (cluster) {
   return new divIcon({
     html: <span class="cluster-icon">${cluster.getChildCount()}</span>, // corrected to use template string
     className: "custom-marker-cluster",
-    iconSize: point(33, 33, true)
+    iconSize: point(33, 33, true),
   });
 };
 
@@ -62,12 +62,13 @@ const restaurants = [
     name: "Kubera",
     link: "https://www.google.com/maps/place/Kubera+Veg+Restaurant/@19.3800083,72.8263394,17z/data=!4m7!3m6!1s0x3be7aec01a87a72d:0xae615f4cdcc1626e!4b1!8m2!3d19.3800083!4d72.8289143!16s%2Fg%2F12hqgb9yl?entry=ttu&g_ep=EgoyMDI0MTAyOS4wIKXMDSoASAFQAw%3D%3D",
     popUp: "Kubera",
-  }
+  },
 ];
 
-export default function Mymap({setShowMymap}) {
+const position = [51.505, -0.09];
+export default function Mymap() {
   return (
-    <MapContainer  setShowMymap={setShowMymap} center={[19.1136, 72.8697]} zoom={13}>
+    <MapContainer center={[19.1136, 72.8697]} zoom={13} style={{width: '900px',height:'500px'}}>
       {/* OpenStreetMap tiles */}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -80,11 +81,19 @@ export default function Mymap({setShowMymap}) {
       >
         {/* Mapping through the restaurants */}
         {restaurants.map((restaurant, index) => (
-          <Marker key={index} position={restaurant.geocode} icon={restaurantIcon}>
+          <Marker
+            key={index}
+            position={restaurant.geocode}
+            icon={restaurantIcon}
+          >
             <Popup>
               <div>
                 <p>{restaurant.popUp}</p>
-                <a href={restaurant.link} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={restaurant.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   View location
                 </a>
               </div>
