@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald&display=swap');
+
+/*
+* Breakpoints:
+* sm: 640px
+* md: 768px
+* lg: 1024px
+* xl: 1280px
+* 2xl: 1536px
+*/
+
+:root {
+    --primary: #e2bb30;
+    --accent-font: 'Oswald';
+    --accent-font-weight: 400;
+    --display-font: 'Bebas Neue', sans-serif;
+    --display-font-weight: 400;
+    --light-text:#231b1b;
+}
+
+*{
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-size: 14pt;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.5;
+}
+
+h1 {
+    color: var(--primary);
+    font-family: var(--display-font);
+    font-weight: var(--display-font-weight);
+    font-size: 2rem;
+}
+
+h2 {
+    color: var(--primary);
+    font-family: var(--display-font);
+    font-weight: var(--display-font-weight);
+    font-size: 2rem;
+}
+
+h3 {
+    color: var(--primary);
+    font-family: var(--accent-font);
+    font-weight: var(--accent-font-weight);
+    font-size: 1.5rem;
+}
+
+h1, h2, h3 {
+    margin: 0;
+    width: 100%;
+    text-align: center;
+}
+
+svg {
+    height: 1.5rem;
+    fill: var(--primary);
+}
+
+ul {
+    padding: 0;
+    margin: 0;
+}
+
+ul li {
+    list-style-type: none;
+}
+
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}

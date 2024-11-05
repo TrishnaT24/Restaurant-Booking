@@ -1,0 +1,23 @@
+footer {
+    width: 100%;
+    padding: 2rem 1rem 4rem 1rem;
+    text-align: center;
+}
+
+footer p {
+    margin-top: 0;
+}
+
+footer button {
+    margin-top: 1rem;
+    padding: 1rem 2rem;
+    background: var(--primary);
+    color: var(--light-text);
+    font-size: 1.15rem;
+    border: none;
+    font-family: var(--accent-font);
+}
+
+footer button:hover, footer button:active {
+    opacity: 50%;
+}

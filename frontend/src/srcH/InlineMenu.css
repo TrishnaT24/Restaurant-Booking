@@ -1,0 +1,32 @@
+nav.inline-menu {
+    display: none;
+    flex: 1 0 auto;
+}
+
+.inline-menu ul li {
+    display: inline-block;
+    padding-right: 1rem;
+}
+
+.inline-menu ul li:last-of-type {
+    padding-right: 0;
+}
+
+.inline-menu button {
+    font-family: var(--accent-font);
+    font-weight: var(--accent-font-weight);
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.inline-menu button:hover,
+.inline-menu button:active,
+.inline-menu button:focus {
+    opacity: 0.6;
+}
+
+@media screen and (min-width: 1024px) {
+    nav.inline-menu {
+        display: block;
+    }
+}

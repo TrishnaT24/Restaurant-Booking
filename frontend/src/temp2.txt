@@ -1,0 +1,25 @@
+import React, { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+function RefrshHandler({ setIsAuthenticated }) {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Check if the user is authenticated via token in local storage
+        if (localStorage.getItem('token')) {
+            setIsAuthenticated(true); // Update authentication state
+
+            // Redirect the user if they are on the login or signup pages
+            if (location.pathname === '/' ||
+                location.pathname === '/login' ||
+                location.pathname === '/signup') {
+                navigate('/filters', { replace: true }); // Redirect to filters page
+            }
+        }
+    }, [location, navigate, setIsAuthenticated]);
+
+    return null; // No UI elements to render
+}
+
+export default RefrshHandler;
