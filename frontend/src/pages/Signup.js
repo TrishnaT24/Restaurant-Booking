@@ -28,7 +28,8 @@ function Signup() {
             return handleError('Name, email, and password are required');
         }
         try {
-            const url = `http://localhost:3000/auth/signup`;
+            // const url = `http://localhost:3000/auth/signup`;
+            const url = `${process.env.REACT_APP_API_URL}/auth/signup`;
             const response = await fetch(url, {
                 method: "POST",
                 headers: {

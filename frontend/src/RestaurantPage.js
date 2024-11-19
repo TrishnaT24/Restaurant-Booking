@@ -14,7 +14,8 @@ const RestaurantPage = () => {
   const fetchRestaurantData = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`http://localhost:3000/api/restaurants/${name}`);
+      // const response = await fetch(`http://localhost:3000/api/restaurants/${name}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/restaurants/${name}`);
       if (response.ok) {
         const data = await response.json();
         setRestaurantData(data);
@@ -33,7 +34,9 @@ const RestaurantPage = () => {
   const joinQueue = async () => {
     try {
       const userName = 'Customer';
-      const response = await fetch(`http://localhost:3000/api/restaurants/${name}/joinQueue`, {
+      // const response = await fetch(`http://localhost:3000/api/restaurants/${name}/joinQueue`
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/restaurants/${name}/joinQueue`
+      , {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,7 +65,9 @@ const RestaurantPage = () => {
 
     const startAutoDequeue = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/restaurants/${name}/dequeue`, {
+        // const response = await fetch(`http://localhost:3000/api/restaurants/${name}/dequeue`
+         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/restaurants/${name}/dequeue`
+          , {
           method: 'POST',
         });
 

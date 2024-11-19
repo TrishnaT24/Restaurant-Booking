@@ -24,7 +24,8 @@ function Login({ setIsAuthenticated }) {
             return handleError('Email and password are required');
         }
         try {
-            const url = `http://localhost:3000/auth/login`;
+            // const url = `http://localhost:3000/auth/login`;
+            const url = `${process.env.REACT_APP_API_URL}/auth/login`;
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
