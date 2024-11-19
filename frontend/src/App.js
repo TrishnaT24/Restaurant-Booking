@@ -8,6 +8,8 @@ import Login from './pages/Login';
 import RestaurantPage from './RestaurantPage';
 import AppH from './srcH/AppH'; // Import AppH component
 import Mymap from './srcH/Mymap';
+import { inject } from '@vercel/analytics';
+inject();
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
