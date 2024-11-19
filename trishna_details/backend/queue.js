@@ -20,7 +20,7 @@ class TimedQueue {
   async enqueue(user) {
     const currentSize = await this.getQueueSize();
 
-    if (currentSize >= 5) { // Example max queue size
+    if (currentSize >= 10) { // Example max queue size
       console.log("Queue is full. Cannot add more customers.");
       return;
     }
